@@ -11,56 +11,59 @@ if not data_set:
 elif data_set:
     js = open(data_set, "r")
 
-if __name__ == '__main__':
-    a = 0
-    j_list = []
-    for i in js.readlines():
+# The code below pushes the dataset to the database
 
-        if a == 200:
-            review_col.insert_many(j_list)
-            a = 0
-            j_list = []
+a = 0
+j_list = []
+for i in js.readlines():
 
-        else:
+    if a == 200:
+        review_col.insert_many(j_list)
+        a = 0
+        j_list = []
 
-            res = json.loads(i)
-            j_list.append(res)
-            a += 1
-            # print(a,".", res)
+    else:
 
-    js.close()
+        res = json.loads(i)
+        j_list.append(res)
+        a += 1
+        # print(a,".", res)
 
-    a = {
-        "_id": 1,
-        "active": 0,
-        "asin_list": [],
-        # "asin_eg": {
-        #     "total": 0,
-        #     "active": True
-        # }
-    }
+js.close()
 
-    d = review_col.distinct("asin")
-    # print(d)
-    a["active"] = 0
-    a["asin_list"] = d
-    status_col.insert_one(a)
-    for i in d:
+# this initiates the flaggin process
 
-        t = review_col.find({"asin": i})
+a = {
+    "_id": 1,
+    "active": 0,
+    "asin_list": [],
+    # "asin_eg": {
+    #     "total": 0,
+    #     "active": True
+    # }
+}
 
-        print(t.count())
-        act = check_soup(get_soup(link.format(i, 1)))
-        if act == None:
-            act = False
-        else:
-            act = True
+d = review_col.distinct("asin")
+# print(d)
+a["active"] = 0
+a["asin_list"] = d
+status_col.insert_one(a)
+for i in d:
+
+    t = review_col.find({"asin": i})
+
+    print(t.count())
+    act = check_soup(get_soup(link.format(i, 1)))
+    if act == None:
+        act = False
+    else:
+        act = True
 
 
-        # a.update({i: })
-        status_col.insert_one({"total": t.count(), "active": act, "asin": i})
-        # print(a)
+    # a.update({i: })
+    status_col.insert_one({"total": t.count(), "active": act, "asin": i})
+    # print(a)
 
-    # status_col.insert_one(a)
+# status_col.insert_one(a)
 
 
