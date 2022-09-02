@@ -356,16 +356,16 @@ def entry():
         status_col.replace_one({"_id": 1}, stat)
         asin_list = stat["asin_list"]
         # logger.info(asin_list)
-        a_counter = 0
+
         stat_counter = 0
         for i in asin_list:
-            if stat_counter > 100:
+            if stat_counter > 50:
                 stat = status_col.find_one({"_id": 1})
                 if stat:
                     if stat["active"] == 0:
                         break
 
-            a_counter += 1
+            stat_counter += 1
             # logger.info(a_counter)
             total = total_num_of_reviews(get_soup(link.format(i, 1)))
             # logger.info(i)
